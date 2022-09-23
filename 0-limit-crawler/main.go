@@ -12,7 +12,11 @@ package main
 import (
 	"fmt"
 	"sync"
+	"time"
 )
+
+// Create ticker channel that occurs every second
+var ticker = time.Tick(time.Second)
 
 // Crawl uses `fetcher` from the `mockfetcher.go` file to imitate a
 // real crawler. It crawls until the maximum depth has reached.
@@ -35,6 +39,10 @@ func Crawl(url string, depth int, wg *sync.WaitGroup) {
 	for _, u := range urls {
 		// Do not remove the `go` keyword, as Crawl() must be
 		// called concurrently
+
+		// Block the next code in the loop until the ticker tick
+		<-ticker
+
 		go Crawl(u, depth-1, wg)
 	}
 	return
